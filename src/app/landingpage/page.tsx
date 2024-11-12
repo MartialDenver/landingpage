@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Notification from '@/components/Notification';
-import Link from 'next/link';
+
 
 export default function LandingPage() {
   const [email, setEmail] = useState('');
