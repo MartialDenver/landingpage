@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import Notification from '@/components/Notification';
 
-
 export default function LandingPage() {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
