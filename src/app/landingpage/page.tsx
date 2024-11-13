@@ -14,7 +14,7 @@ export default function LandingPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     try {
       const response = await fetch('/api/contact', {
         method: 'POST',
@@ -28,16 +28,16 @@ export default function LandingPage() {
           message,
         }),
       });
-  
+
       const data = await response.json();
-  
+
       if (data.success) {
         // Réinitialiser le formulaire
         setName('');
         setEmail('');
         setPhone('');
         setMessage('');
-        
+
         // Afficher la notification
         setShowNotification(true);
       }
@@ -72,37 +72,37 @@ export default function LandingPage() {
       name: "Loïse SERRINE",
       date: "il y a 17 jours",
       comment: "J'ai beaucoup apprécié le design de mon site web, Il me correspond parfaitement",
-      image: "/src/avatar1.png"
+      image: "/image/louiseserrine.png"
     },
     {
       name: "Thomas DUPONT",
       date: "il y a 15 jours",
       comment: "Une équipe professionnelle qui a su répondre à mes attentes. Le résultat est impressionnant",
-      image: "/src/avatar2.png"
+      image: "/image/thomasdupont.jpg"
     },
     {
       name: "Marie LAURENT",
       date: "il y a 12 jours",
       comment: "Service client exceptionnel et résultats au-delà de mes espérances",
-      image: "/src/avatar3.png"
+      image: "/image/marielaurent.jpg"
     },
     {
       name: "Sophie MARTIN",
       date: "il y a 8 jours",
       comment: "L'expertise de l'équipe est remarquable.",
-      image: "/src/avatar3.png"
+      image: "/image/sophiemartin.jpg"
     },
     {
       name: "Alexandre DUBOIS",
       date: "il y a 19 jours",
       comment: "Communication fluide et résultats exceptionnels.",
-      image: "/src/avatar3.png"
+      image: "/image/alexandredubois.jpg"
     },
     {
       name: "Emma ROUSSEAU",
       date: "il y a 12 jours",
       comment: "Une équipe à l'écoute qui a parfaitement su capturer l'essence de notre marque.",
-      image: "/src/avatar3.png"
+      image: "/image/emmarousseau.jpg"
     },
     // Ajoute plus de témoignages similaires...
   ];
@@ -110,11 +110,11 @@ export default function LandingPage() {
   return (
     <div className="relative bg-gradient-to-br from-blue-900 to-black text-white min-h-screen p-4 md:p-8 overflow-x-hidden">
       <Notification
-      message="Votre message a été envoyé avec succès ! Nous vous répondrons dans les plus brefs délais."
-      type="success"
-      isVisible={showNotification}
-      onClose={() => setShowNotification(false)}
-    />
+        message="Votre message a été envoyé avec succès ! Nous vous répondrons dans les plus brefs délais."
+        type="success"
+        isVisible={showNotification}
+        onClose={() => setShowNotification(false)}
+      />
 
       {/* Header avec menu burger pour mobile */}
       <header className="fixed top-0 left-0 right-0 z-50 px-4 py-4 md:px-8 mt-5">
@@ -136,7 +136,6 @@ export default function LandingPage() {
                 </div>
               </button>
 
-              {/* Overlay du menu */}
               {/* Overlay du menu avec animation */}
               {isMenuOpen && (
                 <div
@@ -274,10 +273,12 @@ export default function LandingPage() {
             créatives et de résultats mesurables.
           </p>
           <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 space-x-0 md:space-x-4 items-center justify-center md:justify-start md:pl-7">
-            <button className="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full">
+            <button onClick={() => scrollToSection('contact')}
+              className="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full">
               CONTACTEZ-NOUS
             </button>
-            <button className="w-full md:w-auto bg-transparent hover:bg-white hover:text-black text-white font-bold py-3 px-6 rounded-full border-2 border-blue-800">
+            <button onClick={() => scrollToSection('contact')}
+              className="w-full md:w-auto bg-transparent hover:bg-white hover:text-black text-white font-bold py-3 px-6 rounded-full border-2 border-blue-800">
               PLUS D'INFORMATIONS
             </button>
           </div>
@@ -473,7 +474,7 @@ export default function LandingPage() {
                     className="w-full bg-transparent border border-gray-700 rounded-md p-2 md:p-3 focus:outline-none focus:border-blue-500 text-sm md:text-base"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    required/>
+                    required />
                 </div>
                 <div className="w-full md:w-1/2">
                   <label className="block text-sm mb-2">Téléphone ou whatsapp</label>
@@ -483,7 +484,7 @@ export default function LandingPage() {
                     className="w-full bg-transparent border border-gray-700 rounded-md p-2 md:p-3 focus:outline-none focus:border-blue-500 text-sm md:text-base"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    required/>
+                    required />
                 </div>
               </div>
 
@@ -495,7 +496,7 @@ export default function LandingPage() {
                   className="w-full bg-transparent border border-gray-700 rounded-md p-2 md:p-3 focus:outline-none focus:border-blue-500 text-sm md:text-base"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  required/>
+                  required />
               </div>
 
               <div>
@@ -506,7 +507,7 @@ export default function LandingPage() {
                   className="w-full bg-transparent border border-gray-700 rounded-md p-2 md:p-3 focus:outline-none focus:border-blue-500 resize-none text-sm md:text-base"
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  required/>
+                  required />
               </div>
 
               <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 md:py-4 px-4 md:px-6 rounded-xl text-sm md:text-base">
