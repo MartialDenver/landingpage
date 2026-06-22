@@ -11,6 +11,7 @@ export default function LandingPage() {
   const [message, setMessage] = useState('');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
+  const scrollYRef = React.useRef(0);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,23 +49,40 @@ export default function LandingPage() {
   };
 
   const handleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-    if (!isMenuOpen) {
+    const next = !isMenuOpen;
+    setIsMenuOpen(next);
+    if (next) {
+      scrollYRef.current = window.scrollY;
       document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollYRef.current}px`;
+      document.body.style.width = '100%';
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      window.scrollTo(0, scrollYRef.current);
     }
   };
 
   const scrollToSection = (elementId: string) => {
-    const element = document.getElementById(elementId);
-    if (element) {
-      element.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-      });
-    }
+    // D'abord libérer le body et restaurer la position
+    document.body.style.overflow = '';
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.width = '';
+    window.scrollTo(0, scrollYRef.current);
+
     setIsMenuOpen(false);
+
+    // Attendre que le DOM se stabilise avant de scroller
+    setTimeout(() => {
+      const element = document.getElementById(elementId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 50);
   };
 
   const testimonials = [
@@ -124,84 +142,16 @@ export default function LandingPage() {
 
             {/* Menu Mobile */}
             <div className="md:hidden">
-              {/* Bouton burger */}
+              {/* Bouton burger animé */}
               <button
-                className="relative z-[1001] p-2"
+                className="relative z-[2001] p-2 flex flex-col justify-center items-center gap-1.5 w-10 h-10"
                 onClick={handleMenu}
+                aria-label="Menu"
               >
-                <div className="w-6 h-6 flex flex-col justify-between">
-                  <span className="w-full h-0.5 bg-white"></span>
-                  <span className="w-full h-0.5 bg-white"></span>
-                  <span className="w-full h-0.5 bg-white"></span>
-                </div>
+                <span className={`block w-6 h-0.5 bg-white transition-all duration-300 ease-in-out ${isMenuOpen ? 'rotate-45 translate-y-2' : ''}`}></span>
+                <span className={`block w-6 h-0.5 bg-white transition-all duration-300 ease-in-out ${isMenuOpen ? 'opacity-0 scale-x-0' : ''}`}></span>
+                <span className={`block w-6 h-0.5 bg-white transition-all duration-300 ease-in-out ${isMenuOpen ? '-rotate-45 -translate-y-2' : ''}`}></span>
               </button>
-
-              {/* Overlay du menu avec animation */}
-              {isMenuOpen && (
-                <div
-                  className="fixed inset-0 bg-white z-[1000] transition-transform duration-300 ease-out"
-                  style={{
-                    transform: `translateY(${isMenuOpen ? '0' : '-100%'})`,
-                    animation: isMenuOpen ? 'slideDown 0.3s ease-out forwards' : 'none'
-                  }}
-                >
-                  {/* Header sans bordure en bas */}
-                  <div className="pt-4 pb-2 px-4 flex justify-between items-center">
-                    <span className="text-gray-800 text-xl font-medium">Menu</span>
-                    <button
-                      onClick={handleMenu}
-                      className="p-2 relative z-[1002]" // Augmentation du z-index
-                    >
-                      <svg
-                        className="w-6 h-6 text-gray-800"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M6 18L18 6M6 6l12 12"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-
-                  {/* Liste des liens avec espacement ajusté */}
-                  <div className="flex flex-col mt-4">
-                    <button
-                      onClick={() => {
-                        scrollToSection('hero');
-                        handleMenu();
-                      }}
-                      className="w-full bg-white text-gray-800 text-lg px-4 py-4 text-left hover:bg-gray-50"
-                    >
-                      Pourquoi nous choisir ?
-                    </button>
-
-                    <button
-                      onClick={() => {
-                        scrollToSection('services');
-                        handleMenu();
-                      }}
-                      className="w-full bg-white text-gray-800 text-lg px-4 py-4 text-left hover:bg-gray-50"
-                    >
-                      Nos services
-                    </button>
-
-                    <button
-                      onClick={() => {
-                        scrollToSection('contact');
-                        handleMenu();
-                      }}
-                      className="w-full bg-white text-gray-800 text-lg px-4 py-4 text-left hover:bg-gray-50"
-                    >
-                      Contact
-                    </button>
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* Menu Desktop */}
@@ -246,6 +196,135 @@ export default function LandingPage() {
         </div>
       </header>
 
+      {/* Menu Mobile Overlay — au niveau racine pour couvrir TOUT */}
+      <div
+        className={`md:hidden fixed inset-0 z-[2000] flex flex-col transition-all duration-500 ease-in-out ${isMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+          }`}
+        style={{ background: '#0a0a1a' }}
+      >
+        {/* Lignes diagonales élégantes — thème bleu/violet du projet */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          {/* Ligne diagonale principale */}
+          <div
+            className="absolute"
+            style={{
+              width: '1px',
+              height: '60%',
+              top: '5%',
+              right: '18%',
+              background: 'linear-gradient(to bottom, transparent, #3b82f6 40%, #8b5cf6 70%, transparent)',
+              opacity: 0.4,
+              transform: 'rotate(20deg)',
+            }}
+          />
+          {/* Ligne diagonale secondaire */}
+          <div
+            className="absolute"
+            style={{
+              width: '1px',
+              height: '45%',
+              top: '20%',
+              left: '12%',
+              background: 'linear-gradient(to bottom, transparent, #6366f1 50%, transparent)',
+              opacity: 0.3,
+              transform: 'rotate(-15deg)',
+            }}
+          />
+          {/* Petit point lumineux haut droite */}
+          <div
+            className="absolute rounded-full"
+            style={{
+              width: '6px',
+              height: '6px',
+              top: '12%',
+              right: '22%',
+              background: '#60a5fa',
+              boxShadow: '0 0 12px 4px rgba(96,165,250,0.5)',
+              opacity: 0.8,
+            }}
+          />
+          {/* Petit point lumineux bas gauche */}
+          <div
+            className="absolute rounded-full"
+            style={{
+              width: '4px',
+              height: '4px',
+              bottom: '18%',
+              left: '16%',
+              background: '#a78bfa',
+              boxShadow: '0 0 10px 3px rgba(167,139,250,0.4)',
+              opacity: 0.7,
+            }}
+          />
+          {/* Trait horizontal subtil */}
+          <div
+            className="absolute"
+            style={{
+              width: '30%',
+              height: '1px',
+              bottom: '22%',
+              right: '8%',
+              background: 'linear-gradient(to right, transparent, #3b82f6, transparent)',
+              opacity: 0.25,
+            }}
+          />
+        </div>
+
+        {/* Header du menu */}
+        <div className="flex justify-between items-center px-6 pt-12 pb-4 shrink-0">
+          <span
+            className={`text-white text-2xl font-bold tracking-widest transition-all duration-700 ${isMenuOpen ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'
+              }`}
+          >
+            JHA
+          </span>
+          <button
+            onClick={handleMenu}
+            className="p-2 rounded-full border border-white/30 bg-white/10"
+          >
+            <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Liens */}
+        <nav className="flex flex-col px-6 mt-8 gap-3 flex-1">
+          {[
+            { label: 'Pourquoi nous choisir ?', section: 'hero', delay: 'delay-[100ms]' },
+            { label: 'Nos services', section: 'services', delay: 'delay-[200ms]' },
+            { label: 'Contact', section: 'contact', delay: 'delay-[300ms]' },
+          ].map(({ label, section, delay }, i) => (
+            <button
+              key={i}
+              onClick={() => scrollToSection(section)}
+              className={`group flex items-center justify-between w-full text-left py-5 px-5 rounded-2xl border border-white/10 bg-white/5 text-white text-xl font-medium
+          transition-all duration-500 ${delay} active:bg-white/20
+          ${isMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+            >
+              <span>{label}</span>
+              <svg
+                className="w-5 h-5 text-blue-400 group-hover:translate-x-1 transition-transform duration-200"
+                fill="none" viewBox="0 0 24 24" stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          ))}
+        </nav>
+
+        {/* Footer */}
+        <div
+          className={`px-6 pb-12 shrink-0 transition-all duration-700 delay-[400ms] ${isMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+            }`}
+        >
+          <div className="border-t border-white/10 pt-6 text-center">
+            <p className="text-gray-400 text-sm tracking-widest uppercase">Agence Digitale</p>
+            <p className="text-blue-400 text-xs mt-1">joanishounsou15@gmail.com</p>
+          </div>
+        </div>
+      </div>
+
       {/* Ajoutez ce style dans votre balise style globale ou dans votre fichier CSS */}
       <style jsx>{`
   @keyframes slideDown {
@@ -259,7 +338,7 @@ export default function LandingPage() {
 `}</style>
 
       {/* Hero Section */}
-      <div id="hero" className="w-11/12 md:w-10/12 mx-auto mt-32 md:mt-40 flex flex-col md:flex-row items-center justify-between">
+      <div id="hero" className="w-11/12 md:w-10/12 mx-auto mt-32 md:mt-40 flex flex-col-reverse md:flex-row items-center justify-between">
         <div className="w-full md:w-3/5 mb-8 md:mb-0 text-center md:text-left">
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
             <span className="block">VOTRE MEILLEURE AGENCE</span>
@@ -285,7 +364,7 @@ export default function LandingPage() {
         </div>
         <div className="w-full md:w-1/2 flex justify-center">
           <Image
-            src="/image/why-choose-us-removebg-preview.png"
+            src="/image/why-choose-us.png"
             alt="Digital Agency Illustration"
             width={450}
             height={600}
@@ -434,7 +513,7 @@ export default function LandingPage() {
           {/* Partie gauche avec l'image et les infos */}
           <div className="w-full md:w-1/2 space-y-6">
             <Image
-              src="/image/contact-us-removebg-preview.png"
+              src="/image/contact-us.png"
               alt="Contact"
               width={500}
               height={400}
