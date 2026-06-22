@@ -513,7 +513,6 @@ export default function LandingPage() {
               <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 md:py-4 px-4 md:px-6 rounded-xl text-sm md:text-base">
                 SOUMETTRE
               </button>
-              
             </form>
           </div>
         </div>

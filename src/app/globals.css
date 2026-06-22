@@ -34,3 +34,11 @@ body {
 .animate-slideDown {
   animation: slideDown 0.5s ease-out forwards;
 }
+
+html {
+  overflow-x: clip;
+}
+
+body {
+  overflow-x: clip;
+}
